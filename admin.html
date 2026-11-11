@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内容后台 | 风电工作站</title>
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        /* ---------- 后台页专用样式 ---------- */
+        .sync-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            background: var(--bg-panel);
+        }
+
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            flex: none;
+            border-radius: 50%;
+            background: var(--txt-3);
+        }
+
+        .sync-dot.on {
+            background: var(--green);
+            box-shadow: 0 0 8px rgba(124, 255, 178, .7);
+        }
+
+        .sync-dot.off {
+            background: var(--txt-3);
+        }
+
+        .sync-text {
+            font-family: var(--mono);
+            font-size: 12px;
+            letter-spacing: .4px;
+            color: var(--txt-2);
+        }
+
+        .sync-text b {
+            color: var(--blue);
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            font-family: var(--sans);
+            font-size: 13px;
+            color: var(--txt-1);
+            background: var(--bg-header);
+            border: 1px solid var(--line-strong);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: color .16s, border-color .16s, background .16s;
+        }
+
+        .btn:hover {
+            color: var(--blue);
+            border-color: rgba(92, 200, 255, .6);
+        }
+
+        .btn.primary {
+            color: var(--blue);
+            background: rgba(92, 200, 255, .1);
+            border-color: rgba(92, 200, 255, .5);
+        }
+
+        .btn.primary:hover {
+            background: rgba(92, 200, 255, .18);
+        }
+
+        .btn.danger {
+            color: #ff9c9c;
+            border-color: rgba(255, 156, 156, .35);
+        }
+
+        .btn.danger:hover {
+            color: #ffb6b6;
+            border-color: #ff9c9c;
+            background: rgba(255, 156, 156, .08);
+        }
+
+        .btn.ghost {
+            background: transparent;
+        }
+
+        .btn[disabled] {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        .stat-line {
+            margin-left: auto;
+            font-family: var(--mono);
+            font-size: 12px;
+            letter-spacing: .4px;
+            color: var(--txt-3);
+        }
+
+        /* 连接面板 */
+        .connect-panel {
+            margin-bottom: 18px;
+            padding: 18px 20px;
+            border: 1px solid rgba(92, 200, 255, .3);
+            border-radius: var(--r);
+            background: rgba(92, 200, 255, .05);
+        }
+
+        .connect-panel[hidden] {
+            display: none;
+        }
+
+        .connect-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .connect-note {
+            margin-top: 12px;
+            padding-top: 12px;
+            font-size: 12px;
+            line-height: 1.8;
+            color: var(--txt-2);
+            border-top: 1px dashed rgba(42, 51, 82, .7);
+        }
+
+        .connect-note b {
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .edit-card,
+        .list-card {
+            padding: 20px;
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            background: var(--bg-panel);
+            box-shadow: var(--shadow);
+        }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .card-title {
+            padding-left: 9px;
+            font-size: 16px;
+            letter-spacing: .5px;
+            color: var(--txt-1);
+            border-left: 3px solid var(--blue);
+        }
+
+        .edit-id {
+            font-family: var(--mono);
+            font-size: 11.5px;
+            color: var(--txt-3);
+        }
+
+        .field {
+            margin-bottom: 14px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 6px;
+            font-family: var(--mono);
+            font-size: 11.5px;
+            letter-spacing: .6px;
+            color: var(--txt-3);
+        }
+
+        .input,
+        .select,
+        .textarea {
+            width: 100%;
+            padding: 9px 11px;
+            font-family: var(--sans);
+            font-size: 13.5px;
+            color: var(--txt-1);
+            background: var(--bg-deep);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            outline: none;
+            transition: border-color .16s, box-shadow .16s;
+        }
+
+        .input:focus,
+        .select:focus,
+        .textarea:focus {
+            border-color: rgba(92, 200, 255, .65);
+            box-shadow: 0 0 0 3px rgba(92, 200, 255, .12);
+        }
+
+        .select,
+        input[type="date"] {
+            color-scheme: dark;
+        }
+
+        .textarea {
+            line-height: 1.7;
+            resize: vertical;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .counter {
+            margin-top: 5px;
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--txt-3);
+            text-align: right;
+        }
+
+        .form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .filter-row .select {
+            width: auto;
+            padding: 6px 9px;
+            font-size: 12.5px;
+        }
+
+        .doc-item {
+            margin-bottom: 8px;
+            padding: 11px 12px;
+            border: 1px solid var(--line-soft);
+            border-radius: 8px;
+            background: rgba(16, 20, 31, .5);
+            cursor: pointer;
+            transition: border-color .16s, background .16s;
+        }
+
+        .doc-item:hover {
+            border-color: rgba(92, 200, 255, .4);
+        }
+
+        .doc-item.active {
+            border-color: rgba(92, 200, 255, .75);
+            background: rgba(92, 200, 255, .07);
+        }
+
+        .doc-top {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .doc-title {
+            font-size: 13.5px;
+            line-height: 1.5;
+            color: var(--txt-1);
+            word-break: break-word;
+        }
+
+        .doc-del {
+            flex: none;
+            padding: 1px 7px;
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--txt-3);
+            background: transparent;
+            border: 1px solid var(--line-soft);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: color .16s, border-color .16s;
+        }
+
+        .doc-del:hover {
+            color: #ff9c9c;
+            border-color: rgba(255, 156, 156, .5);
+        }
+
+        .doc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-top: 7px;
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--txt-3);
+        }
+
+        .doc-cat {
+            padding: 1px 7px;
+            border: 1px solid var(--line-strong);
+            border-radius: 4px;
+            color: var(--txt-2);
+        }
+
+        .empty-tip {
+            padding: 32px 12px;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--txt-2);
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 28px;
+            z-index: 100;
+            max-width: min(560px, 88vw);
+            padding: 11px 18px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--txt-1);
+            background: var(--bg-header);
+            border: 1px solid rgba(92, 200, 255, .5);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translate(-50%, 16px);
+            pointer-events: none;
+            transition: opacity .22s, transform .22s;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .toast.err {
+            border-color: rgba(255, 156, 156, .6);
+        }
+
+        @media (max-width: 900px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .connect-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-line {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .field-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a class="nav-item" href="index.html">首页</a>
+            <a class="nav-item" href="wind-pre.html">风电前期</a>
+            <a class="nav-item" href="wind-mid.html">风电中期</a>
+            <a class="nav-item" href="market.html">电力市场</a>
+            <a class="nav-item" href="notes.html">笔记杂谈</a>
+            <a class="nav-item" href="about.html">关于我</a>
+        </nav>
+
+        <div class="page-title-wrap">
+            <h2 class="page-title">内容后台</h2>
+            <div class="page-desc">登录后直接提交到 GitHub 仓库，Pages 自动更新</div>
+        </div>
+
+        <div class="sync-bar">
+            <span class="sync-dot off" id="syncDot"></span>
+            <span class="sync-text" id="syncText">未连接仓库</span>
+            <button class="btn primary" id="btnConnect">连接 GitHub</button>
+            <button class="btn" id="btnPull" disabled>拉取最新</button>
+            <button class="btn ghost" id="btnLogout" disabled>退出登录</button>
+            <span class="stat-line" id="statLine">共 0 篇</span>
+        </div>
+
+        <div class="connect-panel" id="connectPanel" hidden>
+            <div class="connect-grid">
+                <div class="field">
+                    <label for="c-owner">仓库所有者</label>
+                    <input class="input" id="c-owner" type="text" placeholder="GitHub 用户名，如 zhangsan">
+                </div>
+                <div class="field">
+                    <label for="c-repo">仓库名</label>
+                    <input class="input" id="c-repo" type="text" placeholder="如 wind-station">
+                </div>
+                <div class="field">
+                    <label for="c-branch">分支</label>
+                    <input class="input" id="c-branch" type="text" placeholder="main">
+                </div>
+                <div class="field">
+                    <label for="c-path">数据文件路径</label>
+                    <input class="input" id="c-path" type="text" placeholder="articles.json">
+                </div>
+            </div>
+            <div class="field">
+                <label for="c-token">Personal Access Token</label>
+                <input class="input" id="c-token" type="password" placeholder="github_pat_xxx 或 ghp_xxx" autocomplete="off">
+            </div>
+            <div class="form-actions">
+                <button class="btn primary" id="btnVerify">验证并连接</button>
+                <button class="btn ghost" id="btnPanelClose">收起</button>
+            </div>
+            <div class="connect-note">
+                令牌只保存在本机浏览器，不会写进仓库。去 <b>GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens</b> 新建：仓库只勾选本站仓库，权限只给 <b>Contents: Read and write</b>。公开仓库建议定期轮换令牌。
+            </div>
+        </div>
+
+        <div class="admin-grid">
+            <div class="edit-card">
+                <div class="card-head">
+                    <div class="card-title">编辑文章</div>
+                    <div class="edit-id" id="editingId">新建</div>
+                </div>
+
+                <div class="field">
+                    <label for="f-title">标题</label>
+                    <input class="input" id="f-title" type="text" placeholder="例如：测风数据质控的三道校验">
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="f-cat">分类</label>
+                        <select class="select" id="f-cat">
+                            <option value="wind-pre">风电前期</option>
+                            <option value="wind-mid">风电中期</option>
+                            <option value="market">电力市场</option>
+                            <option value="notes">笔记杂谈</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="f-date">日期</label>
+                        <input class="input" id="f-date" type="date">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="f-desc">摘要</label>
+                    <textarea class="textarea" id="f-desc" rows="2" placeholder="列表页显示的一句话摘要"></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="f-content">正文</label>
+                    <textarea class="textarea" id="f-content" rows="14" placeholder="直接换行即可，详情页会原样保留段落与空行"></textarea>
+                    <div class="counter" id="counter">0 字</div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn" id="btnNew">新增文章</button>
+                    <button class="btn primary" id="btnSave">保存并提交</button>
+                    <button class="btn" id="btnExport">导出本地 JSON</button>
+                    <button class="btn danger" id="btnDelete" disabled>删除当前</button>
+                </div>
+            </div>
+
+            <div class="list-card">
+                <div class="card-head">
+                    <div class="card-title">文章列表</div>
+                    <div class="edit-id" id="listCount">0 条</div>
+                </div>
+
+                <div class="filter-row">
+                    <select class="select" id="f-filter">
+                        <option value="all">全部分类</option>
+                        <option value="wind-pre">风电前期</option>
+                        <option value="wind-mid">风电中期</option>
+                        <option value="market">电力市场</option>
+                        <option value="notes">笔记杂谈</option>
+                    </select>
+                </div>
+
+                <div id="docList"></div>
+            </div>
+        </div>
+
+        <footer>
+            © 风电工作站 | 内容后台 · 提交后约 1 分钟生效于 GitHub Pages
+        </footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const CKEY_CFG = "ws_gh_cfg";
+        const CKEY_TOKEN = "ws_gh_token";
+        const CKEY_DRAFT = "ws_articles_draft";
+        const API = "https://api.github.com";
+
+        const CATS = {
+            "wind-pre": "风电前期",
+            "wind-mid": "风电中期",
+            "market": "电力市场",
+            "notes": "笔记杂谈"
+        };
+
+        let articles = [];
+        let editingId = null;
+        let dirty = false;
+        let connected = false;
+        let remoteSha = null;
+        let cfg = { owner: "", repo: "", branch: "main", path: "articles.json", token: "" };
+
+        const $ = id => document.getElementById(id);
+
+        /* ---------- 工具 ---------- */
+        function esc(str) {
+            return String(str == null ? "" : str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function today() {
+            const d = new Date();
+            const p = n => String(n).padStart(2, "0");
+            return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+        }
+
+        function nowStamp() {
+            const d = new Date();
+            const p = n => String(n).padStart(2, "0");
+            return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate())
+                + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+        }
+
+        let toastTimer = null;
+        function toast(msg, isErr) {
+            const el = $("toast");
+            el.textContent = msg;
+            el.classList.toggle("err", !!isErr);
+            el.classList.add("show");
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => el.classList.remove("show"), 3200);
+        }
+
+        function utf8ToB64(str) {
+            const bytes = new TextEncoder().encode(str);
+            let bin = "";
+            const CHUNK = 0x8000;
+            for (let i = 0; i < bytes.length; i += CHUNK) {
+                bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+            }
+            return btoa(bin);
+        }
+
+        function b64ToUtf8(b64) {
+            const bin = atob(String(b64).replace(/\n/g, ""));
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+            return new TextDecoder("utf-8").decode(bytes);
+        }
+
+        function nextId() {
+            let max = 0;
+            articles.forEach(a => {
+                const m = /^art(\d+)$/.exec(a.id || "");
+                if (m) max = Math.max(max, parseInt(m[1], 10));
+            });
+            return "art" + String(max + 1).padStart(3, "0");
+        }
+
+        /* ---------- GitHub API ---------- */
+        async function ghFetch(path, options) {
+            const opts = options || {};
+            const headers = Object.assign({
+                "Authorization": "Bearer " + cfg.token,
+                "Accept": "application/vnd.github+json"
+            }, opts.headers || {});
+            return fetch(API + path, Object.assign({}, opts, { headers: headers }));
+        }
+
+        function apiError(status, what) {
+            if (status === 401) return "令牌无效或已过期，请重新生成 Personal Access Token";
+            if (status === 403) return "权限不足：令牌需要该仓库的 Contents: Read and write 权限";
+            if (status === 404) return "找不到仓库或文件：检查用户名、仓库名和文件路径，或令牌没勾选该仓库";
+            if (status === 409) return "远端文件已被改动，请先点「拉取最新」再提交";
+            if (status === 422) return "提交被拒绝：分支或文件参数不正确";
+            return (what || "请求") + "失败，HTTP " + status;
+        }
+
+        function fileUrl() {
+            return "/repos/" + encodeURIComponent(cfg.owner) + "/" + encodeURIComponent(cfg.repo)
+                + "/contents/" + cfg.path.split("/").map(encodeURIComponent).join("/");
+        }
+
+        async function pullRemote(silent) {
+            const res = await ghFetch(fileUrl() + "?ref=" + encodeURIComponent(cfg.branch));
+            if (res.status === 404) {
+                articles = [];
+                remoteSha = null;
+                render();
+                if (!silent) toast("该分支下还没有 " + cfg.path + "，保存时会自动创建");
+                return true;
+            }
+            if (!res.ok) {
+                if (!silent) toast(apiError(res.status, "读取"), true);
+                return false;
+            }
+            const data = await res.json();
+            try {
+                const parsed = JSON.parse(b64ToUtf8(data.content));
+                if (!Array.isArray(parsed)) throw new Error("not array");
+                articles = parsed;
+            } catch (e) {
+                if (!silent) toast("远端文件不是合法的 articles.json", true);
+                return false;
+            }
+            remoteSha = data.sha;
+            render();
+            if (!silent) toast("已拉取远端 " + articles.length + " 篇文章");
+            return true;
+        }
+
+        async function pushRemote(commitMessage) {
+            if (!connected) {
+                toast("还没连接仓库，改动只存在本地草稿", true);
+                return false;
+            }
+            const body = {
+                message: commitMessage,
+                content: utf8ToB64(JSON.stringify(articles, null, 4)),
+                branch: cfg.branch
+            };
+            if (remoteSha) body.sha = remoteSha;
+
+            const res = await ghFetch(fileUrl(), {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+
+            if (!res.ok) {
+                toast(apiError(res.status, "提交"), true);
+                return false;
+            }
+            const data = await res.json();
+            remoteSha = data.content.sha;
+            return true;
+        }
+
+        /* ---------- 连接 / 退出 ---------- */
+        function loadConfig() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(CKEY_CFG) || "{}");
+                cfg.owner = saved.owner || "";
+                cfg.repo = saved.repo || "";
+                cfg.branch = saved.branch || "main";
+                cfg.path = saved.path || "articles.json";
+            } catch (e) { /* 忽略 */ }
+            cfg.token = localStorage.getItem(CKEY_TOKEN) || "";
+            $("c-owner").value = cfg.owner;
+            $("c-repo").value = cfg.repo;
+            $("c-branch").value = cfg.branch;
+            $("c-path").value = cfg.path;
+        }
+
+        function saveConfig() {
+            localStorage.setItem(CKEY_CFG, JSON.stringify({
+                owner: cfg.owner, repo: cfg.repo, branch: cfg.branch, path: cfg.path
+            }));
+        }
+
+        function setConnectedUI() {
+            const dot = $("syncDot");
+            dot.classList.toggle("on", connected);
+            dot.classList.toggle("off", !connected);
+            $("syncText").innerHTML = connected
+                ? '已连接 <b>' + esc(cfg.owner) + "/" + esc(cfg.repo) + "</b> · " + esc(cfg.branch) + " · " + esc(cfg.path)
+                : "未连接仓库";
+            $("btnConnect").textContent = connected ? "更换仓库" : "连接 GitHub";
+            $("btnPull").disabled = !connected;
+            $("btnLogout").disabled = !connected;
+        }
+
+        async function verifyAndConnect() {
+            const owner = $("c-owner").value.trim();
+            const repo = $("c-repo").value.trim();
+            const branch = $("c-branch").value.trim() || "main";
+            const path = $("c-path").value.trim() || "articles.json";
+            const token = $("c-token").value.trim();
+
+            if (!owner || !repo) {
+                toast("请填写仓库所有者和仓库名", true);
+                return;
+            }
+            if (!token) {
+                toast("请填写 Personal Access Token", true);
+                return;
+            }
+
+            cfg = { owner: owner, repo: repo, branch: branch, path: path, token: token };
+            saveConfig();
+            localStorage.setItem(CKEY_TOKEN, token);
+
+            const btn = $("btnVerify");
+            btn.disabled = true;
+            btn.textContent = "验证中...";
+
+            try {
+                const me = await ghFetch("/user");
+                if (!me.ok) {
+                    toast(apiError(me.status, "验证令牌"), true);
+                    return;
+                }
+                const user = await me.json();
+
+                const repoRes = await ghFetch("/repos/" + encodeURIComponent(owner) + "/" + encodeURIComponent(repo));
+                if (!repoRes.ok) {
+                    toast(apiError(repoRes.status, "访问仓库"), true);
+                    return;
+                }
+                const repoInfo = await repoRes.json();
+
+                connected = true;
+                setConnectedUI();
+                $("connectPanel").hidden = true;
+                $("c-token").value = "";
+
+                const ok = await pullRemote(true);
+                toast("已连接 " + user.login + " · 默认分支 " + repoInfo.default_branch
+                    + (ok ? " · 载入 " + articles.length + " 篇" : ""));
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "验证并连接";
+            }
+        }
+
+        function logout() {
+            if (!window.confirm("退出登录会清除本机保存的令牌，确定吗？")) return;
+            localStorage.removeItem(CKEY_TOKEN);
+            cfg.token = "";
+            connected = false;
+            remoteSha = null;
+            setConnectedUI();
+            toast("已退出，当前仅本地草稿模式");
+        }
+
+        /* ---------- 渲染 ---------- */
+        function persistDraft() {
+            try {
+                localStorage.setItem(CKEY_DRAFT, JSON.stringify(articles));
+            } catch (e) { /* 配额满了就只靠远端 */ }
+        }
+
+        function render() {
+            const total = articles.length;
+            const parts = Object.keys(CATS).map(k => CATS[k] + " " + articles.filter(a => a.category === k).length);
+            $("statLine").textContent = "共 " + total + " 篇 · " + parts.join(" / ");
+            $("editingId").textContent = editingId ? editingId : "新建";
+            $("btnDelete").disabled = !editingId;
+            renderList();
+            setConnectedUI();
+        }
+
+        function renderList() {
+            const filter = $("f-filter").value;
+            const box = $("docList");
+            const list = articles.slice().sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+            const shown = filter === "all" ? list : list.filter(a => a.category === filter);
+            $("listCount").textContent = shown.length + " 条";
+
+            if (shown.length === 0) {
+                box.innerHTML = '<div class="empty-tip">还没有文章。<br>连接仓库后点「拉取最新」，或直接用左边表单新建。</div>';
+                return;
+            }
+
+            box.innerHTML = shown.map(a => {
+                const catName = CATS[a.category] || a.category || "未分类";
+                return '<div class="doc-item' + (a.id === editingId ? " active" : "") + '" data-id="' + esc(a.id) + '">'
+                    + '<div class="doc-top">'
+                    + '<div class="doc-title">' + esc(a.title || "（无标题）") + '</div>'
+                    + '<button class="doc-del" data-del="' + esc(a.id) + '" title="删除">删除</button>'
+                    + '</div>'
+                    + '<div class="doc-meta">'
+                    + '<span class="doc-cat">' + esc(catName) + '</span>'
+                    + '<span>' + esc(a.date || "无日期") + '</span>'
+                    + '<span>' + esc(a.id || "") + '</span>'
+                    + '</div>'
+                    + '</div>';
+            }).join("");
+        }
+
+        /* ---------- 表单 ---------- */
+        function fillForm(art) {
+            $("f-title").value = art ? (art.title || "") : "";
+            $("f-cat").value = art ? (art.category || "wind-pre") : "wind-pre";
+            $("f-date").value = art ? (art.date || today()) : today();
+            $("f-desc").value = art ? (art.desc || "") : "";
+            $("f-content").value = art ? (art.content || "") : "";
+            updateCounter();
+        }
+
+        function updateCounter() {
+            $("counter").textContent = $("f-content").value.length + " 字";
+        }
+
+        function guard() {
+            if (!dirty) return true;
+            return window.confirm("当前编辑内容还没保存，确定要离开吗？");
+        }
+
+        /* ---------- 动作 ---------- */
+        function selectArticle(id) {
+            const art = articles.find(a => a.id === id);
+            if (!art) return;
+            editingId = id;
+            dirty = false;
+            fillForm(art);
+            render();
+        }
+
+        async function saveArticle() {
+            const title = $("f-title").value.trim();
+            const category = $("f-cat").value;
+            const date = $("f-date").value;
+            const desc = $("f-desc").value.trim();
+            const content = $("f-content").value;
+
+            if (!title) {
+                toast("标题不能为空", true);
+                $("f-title").focus();
+                return;
+            }
+            if (!date) {
+                toast("请选择发布日期", true);
+                $("f-date").focus();
+                return;
+            }
+            if (!content.trim()) {
+                toast("正文不能为空", true);
+                $("f-content").focus();
+                return;
+            }
+
+            const isNew = !editingId;
+            const rec = { id: editingId || nextId(), title: title, category: category, date: date, desc: desc, content: content };
+
+            if (!isNew) {
+                const idx = articles.findIndex(a => a.id === editingId);
+                if (idx === -1) articles.push(rec);
+                else articles[idx] = rec;
+            } else {
+                articles.push(rec);
+            }
+
+            editingId = rec.id;
+            dirty = false;
+            persistDraft();
+            render();
+
+            const btn = $("btnSave");
+            btn.disabled = true;
+            const oldLabel = btn.textContent;
+            btn.textContent = "提交中...";
+
+            try {
+                if (connected) {
+                    const msg = (isNew ? "新增文章：" : "更新文章：") + title + "（" + nowStamp() + "）";
+                    const ok = await pushRemote(msg);
+                    if (ok) toast("已提交到 GitHub，约 1 分钟后线上生效");
+                    else toast("提交失败，改动已保留在本地草稿", true);
+                } else {
+                    toast("已存本地草稿；连接仓库后可一键提交到线上");
+                }
+            } finally {
+                btn.disabled = false;
+                btn.textContent = oldLabel;
+            }
+        }
+
+        async function deleteArticle(id) {
+            const art = articles.find(a => a.id === id);
+            if (!art) return;
+            if (!window.confirm("确定删除《" + (art.title || "无标题") + "》？" +
+                (connected ? "删除会直接提交到仓库。" : ""))) return;
+
+            articles = articles.filter(a => a.id !== id);
+            if (editingId === id) {
+                editingId = null;
+                fillForm(null);
+            }
+            dirty = false;
+            persistDraft();
+            render();
+
+            if (connected) {
+                const ok = await pushRemote("删除文章：" + (art.title || art.id) + "（" + nowStamp() + "）");
+                if (ok) toast("已从仓库删除");
+                else toast("删除提交失败，请在「拉取最新」后重试", true);
+            } else {
+                toast("已从本地草稿删除");
+            }
+        }
+
+        function newArticle() {
+            if (!guard()) return;
+            editingId = null;
+            dirty = false;
+            fillForm(null);
+            render();
+            $("f-title").focus();
+        }
+
+        function download() {
+            if (articles.length === 0) {
+                toast("没有可导出的文章", true);
+                return;
+            }
+            const blob = new Blob([JSON.stringify(articles, null, 4)], { type: "application/json;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "articles.json";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            toast("已导出 articles.json");
+        }
+
+        /* ---------- 启动 ---------- */
+        async function boot() {
+            loadConfig();
+            setConnectedUI();
+
+            const draft = localStorage.getItem(CKEY_DRAFT);
+            if (draft) {
+                try {
+                    const arr = JSON.parse(draft);
+                    if (Array.isArray(arr)) articles = arr;
+                } catch (e) { /* 忽略坏草稿 */ }
+            }
+
+            if (cfg.token && cfg.owner && cfg.repo) {
+                connected = true;
+                setConnectedUI();
+                const ok = await pullRemote(true);
+                if (!ok) {
+                    connected = false;
+                    setConnectedUI();
+                    toast("自动连接失败，请重新连接或检查令牌", true);
+                }
+            } else if (articles.length === 0) {
+                try {
+                    const res = await fetch(cfg.path || "articles.json", { cache: "no-store" });
+                    if (res.ok) articles = await res.json();
+                } catch (e) { /* file:// 下正常失败 */ }
+            }
+
+            render();
+            fillForm(null);
+
+            if (!connected && articles.length === 0) {
+                toast("首次使用：点「连接 GitHub」填入仓库信息和令牌");
+            }
+        }
+
+        /* ---------- 事件 ---------- */
+        $("btnConnect").addEventListener("click", () => {
+            $("connectPanel").hidden = !$("connectPanel").hidden;
+        });
+        $("btnPanelClose").addEventListener("click", () => { $("connectPanel").hidden = true; });
+        $("btnVerify").addEventListener("click", verifyAndConnect);
+        $("btnLogout").addEventListener("click", logout);
+
+        $("btnPull").addEventListener("click", async () => {
+            if (!guard()) return;
+            $("btnPull").disabled = true;
+            try {
+                const ok = await pullRemote(false);
+                if (ok) {
+                    editingId = null;
+                    fillForm(null);
+                    dirty = false;
+                    persistDraft();
+                    render();
+                }
+            } finally {
+                $("btnPull").disabled = false;
+            }
+        });
+
+        $("btnSave").addEventListener("click", saveArticle);
+        $("btnNew").addEventListener("click", newArticle);
+        $("btnExport").addEventListener("click", download);
+
+        $("btnDelete").addEventListener("click", () => {
+            if (editingId) deleteArticle(editingId);
+        });
+
+        $("f-content").addEventListener("input", updateCounter);
+        $("f-filter").addEventListener("change", renderList);
+
+        ["f-title", "f-cat", "f-date", "f-desc", "f-content"].forEach(id => {
+            $(id).addEventListener("input", () => { dirty = true; });
+            $(id).addEventListener("change", () => { dirty = true; });
+        });
+
+        $("docList").addEventListener("click", e => {
+            const del = e.target.closest("[data-del]");
+            if (del) {
+                e.stopPropagation();
+                deleteArticle(del.getAttribute("data-del"));
+                return;
+            }
+            const item = e.target.closest("[data-id]");
+            if (!item) return;
+            if (!guard()) return;
+            selectArticle(item.getAttribute("data-id"));
+        });
+
+        window.addEventListener("beforeunload", e => {
+            if (dirty) {
+                e.preventDefault();
+                e.returnValue = "";
+            }
+        });
+
+        boot();
+    </script>
+</body>
+</html>

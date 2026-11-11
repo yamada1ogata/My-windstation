@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章详情 | 风电工作站</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a class="nav-item" href="index.html">首页</a>
+            <a class="nav-item" href="wind-pre.html">风电前期</a>
+            <a class="nav-item" href="wind-mid.html">风电中期</a>
+            <a class="nav-item" href="market.html">电力市场</a>
+            <a class="nav-item" href="notes.html">笔记杂谈</a>
+            <a class="nav-item" href="about.html">关于我</a>
+        </nav>
+        <div class="breadcrumb">
+            <a href="index.html">首页</a> / <span id="bread-title"></span>
+        </div>
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title" id="title"></h1>
+                <div class="article-meta">日期：<span id="date"></span></div>
+            </div>
+            <div class="article-content" id="content"></div>
+        </div>
+    </div>
+    <!-- 回到顶部按钮 -->
+    <button id="backTop">↑</button>
+
+<script>
+const urlParams = new URLSearchParams(location.search);
+const aid = urlParams.get("id");
+fetch("articles.json")
+.then(res=>{
+    if(!res.ok){
+        throw new Error('文件响应异常');
+    }
+    return res.json();
+})
+.then(list=>{
+    const art = list.find(x=>x.id === aid);
+    if(!art){
+        document.getElementById("title").innerHTML = `<span class="error-title">文章不存在</span>`;
+        document.getElementById("content").innerHTML = `<div class="error-text">没有找到该ID对应的文章，可能链接失效、文章已删除。<br><a href="index.html" style="color:#48d0ff">返回首页</a></div>`;
+        document.getElementById("date").innerText = "";
+        document.getElementById("bread-title").innerText = "错误";
+        return;
+    }
+    document.getElementById("bread-title").innerText = art.title;
+    document.getElementById("title").innerText = art.title;
+    document.getElementById("date").innerText = art.date;
+    document.getElementById("content").innerText = art.content;
+})
+.catch(err=>{
+    document.getElementById("title").innerHTML = `<span class="error-title">数据加载失败</span>`;
+    document.getElementById("content").innerHTML = `<div class="error-text">读取 articles.json 失败，请检查：<br>1. json文件是否存在、文件名是否正确<br>2. json语法是否合法<br><a href="index.html" style="color:#48d0ff">返回首页</a></div>`;
+    document.getElementById("date").innerText = "";
+    document.getElementById("bread-title").innerText = "错误";
+})
+
+// 回到顶部逻辑
+const backTopBtn = document.getElementById('backTop');
+window.addEventListener('scroll',()=>{
+    if(window.scrollY > 300){
+        backTopBtn.style.display = "block";
+    }else{
+        backTopBtn.style.display = "none";
+    }
+})
+backTopBtn.addEventListener('click',()=>{
+    window.scrollTo({top:0,behavior:"smooth"})
+})
+</script>
+</body>
+</html>

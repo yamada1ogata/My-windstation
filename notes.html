@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔记杂谈 | 风电工作站</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a class="nav-item" href="index.html">首页</a>
+            <a class="nav-item" href="wind-pre.html">风电前期</a>
+            <a class="nav-item" href="wind-mid.html">风电中期</a>
+            <a class="nav-item" href="market.html">电力市场</a>
+            <a class="nav-item active" href="notes.html">笔记杂谈</a>
+            <a class="nav-item" href="about.html">关于我</a>
+        </nav>
+        <div class="page-title-wrap">
+            <h2 class="page-title">笔记杂谈</h2>
+            <div class="page-desc">注电备考、学习记录、工程随想、技术杂记</div>
+        </div>
+        <div class="list-card" id="articleList"></div>
+    </div>
+<script>
+async function render(){
+    const res = await fetch("articles.json");
+    const all = await res.json();
+    const list = all.filter(x=>x.category === "notes").sort((a,b)=>new Date(b.date)-new Date(a.date));
+    const box = document.getElementById("articleList");
+    if(list.length === 0){
+        box.innerHTML = `<div class="empty-tip">该分类下暂无文章</div>`;
+        return;
+    }
+    let html = "";
+    list.forEach(art=>{
+        html += `
+        <div class="article-item">
+            <a class="article-title" href="detail.html?id=${art.id}">${art.title}</a>
+            <div class="article-desc">${art.desc}</div>
+            <div class="article-date">${art.date}</div>
+        </div>
+        `
+    })
+    box.innerHTML = html;
+}
+render();
+</script>
+</body>
+</html>

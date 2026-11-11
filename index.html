@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>风电工作站</title>
+    <!-- 引入外部css -->
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a class="nav-item active" href="index.html">首页</a>
+            <a class="nav-item" href="wind-pre.html">风电前期</a>
+            <a class="nav-item" href="wind-mid.html">风电中期</a>
+            <a class="nav-item" href="market.html">电力市场</a>
+            <a class="nav-item" href="notes.html">笔记杂谈</a>
+            <a class="nav-item" href="about.html">关于我</a>
+        </nav>
+
+        <div class="banner">
+            <div>
+                <h1>风电工作站</h1>
+                <div class="banner-desc">前期设计 · 市场分析 · 工程笔记 · 数据归档</div>
+            </div>
+            <div class="banner-icon">⚡</div>
+        </div>
+
+        <!-- 【这里就是完全复刻原版zuSpace的技能终端面板】 -->
+        <div class="terminal-full">
+            <div class="terminal-headline">
+                <span class="terminal-cmd-prompt">root@windstation:/home/wind$</span>
+                <span> paste skills_*.md | sort -k2 -rn | column -t</span>
+                <span class="terminal-time">took 0.067s</span>
+            </div>
+            <div class="terminal-log-row">▸ 正在扫描技能模块... <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:99%"></span></span> 99%</div>
+            <div class="terminal-log-row">▸ 载入技能分支... <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:99%"></span></span> 99%</div>
+            <div class="terminal-log-row">▸ 数据就绪 <span class="terminal-log-done">done</span></div>
+<!-- ========== 【个人档案卡片 放到红线位置】 ========== -->
+<div class="profile-card">
+    <div class="profile-avatar-wrap">
+        <img class="profile-avatar" src="avatar.jpg" alt="avatar">
+        <div class="profile-online">
+            <span class="profile-online-dot"></span>在线
+        </div>
+        <div class="profile-uptime">uptime: 9490d</div>
+    </div>
+    <div class="profile-content">
+        <div class="profile-info-grid">
+            <div>姓名：阿祖（吴彦祖）</div>
+            <div>职业：全栈开发者</div>
+            <div>年龄：██</div>
+            <div>身高：183.5cm</div>
+            <div>体重：53kg</div>
+            <div>学历：本科</div>
+            <div>星座：摩羯座</div>
+            <div>MBTI：<span style="color:#c89fff">INTJ</span></div>
+            <div></div>
+        </div>
+        <!-- 六维属性条 -->
+        <div class="profile-stat-row stat-apperance">
+            <span class="stat-name">颜值</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:85%"></div></div>
+            <span class="stat-val">85</span>
+        </div>
+        <div class="profile-stat-row stat-iq">
+            <span class="stat-name">智商</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:120%"></div></div>
+            <span class="stat-val">120</span>
+        </div>
+        <div class="profile-stat-row stat-eq">
+            <span class="stat-name">情商</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:140%"></div></div>
+            <span class="stat-val">140</span>
+        </div>
+        <div class="profile-stat-row stat-str">
+            <span class="stat-name">力量</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:75%"></div></div>
+            <span class="stat-val">75</span>
+        </div>
+        <div class="profile-stat-row stat-dex">
+            <span class="stat-name">敏捷</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:70%"></div></div>
+            <span class="stat-val">70</span>
+        </div>
+        <div class="profile-stat-row stat-mp">
+            <span class="stat-name">法力</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:60%"></div></div>
+            <span class="stat-val">60</span>
+        </div>
+        <div class="profile-ach-title">个人档案 · 已达成就</div>
+        <div class="ach-wrap">
+            <span class="ach-tag">⭐ 全栈之星</span>
+            <span class="ach-tag">🧠 AI探索者</span>
+            <span class="ach-tag">🔍 全能厨师</span>
+            <span class="ach-tag">🥩 锅包肉爱好者</span>
+            <span class="ach-tag">🏸 南法信林丹</span>
+            <span class="ach-tag">♡ 林亭口高中第 56 亚瑟</span>
+        </div>
+    </div>
+</div>
+
+            <div class="terminal-skill-wrap">
+                <!-- FE 栏 对应原图左边FE -->
+                <div class="skill-block fe">
+                    <h4>⚡ WIND 风资源</h4>
+                    <div class="skill-item">
+                        <span class="skill-name">测风数据质控</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:98%"></span></span>
+                        <span class="skill-val">98</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">发电量测算</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:90%"></span></span>
+                        <span class="skill-val">90</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:82%"></span></span>
+                        <span class="skill-val">82</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">代表年订正</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:92%"></span></span>
+                        <span class="skill-val">92</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">尾流仿真</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:80%"></span></span>
+                        <span class="skill-val">80</span>
+                    </div>
+                </div>
+                <!-- RD 栏 原图RD -->
+                <div class="skill-block rd">
+                    <h4>⚙️ RD 电气送出</h4>
+                    <div class="skill-item">
+                        <span class="skill-name">集电线路设计</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:70%"></span></span>
+                        <span class="skill-val">70</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">并网接入方案</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:85%"></span></span>
+                        <span class="skill-val">85</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">风机基础选型</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:80%"></span></span>
+                        <span class="skill-val">80</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">系统一次图</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:85%"></span></span>
+                        <span class="skill-val">85</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">电力消纳测算</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:75%"></span></span>
+                        <span class="skill-val">75</span>
+                    </div>
+                </div>
+                <!-- AI 栏 原图AI -->
+                <div class="skill-block ai">
+                    <h4>✨ AI & 备考</h4>
+                    <div class="skill-item">
+                        <span class="skill-name">注电发输变电</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:65%"></span></span>
+                        <span class="skill-val">65</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">工程数据分析</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:82%"></span></span>
+                        <span class="skill-val">82</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">Meteo数据处理</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:95%"></span></span>
+                        <span class="skill-val">95</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">Excel模型搭建</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:88%"></span></span>
+                        <span class="skill-val">88</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">RAG文档检索</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:75%"></span></span>
+                        <span class="skill-val">75</span>
+                    </div>
+                </div>
+                <!-- 3D/CAD栏 原图3D -->
+                <div class="skill-block cad">
+                    <h4>📐 CAD 总图建模</h4>
+                    <div class="skill-item">
+                        <span class="skill-name">CAD总图布置</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:50%"></span></span>
+                        <span class="skill-val">50</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">地形处理</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:85%"></span></span>
+                        <span class="skill-val">85</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">国土坐标梳理</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:40%"></span></span>
+                        <span class="skill-val">40</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">方案比选优化</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:75%"></span></span>
+                        <span class="skill-val">75</span>
+                    </div>
+                    <div class="skill-item">
+                        <span class="skill-name">出图后处理</span>
+                        <span class="skill-bar-bg"><span class="skill-bar-fill" style="width:65%"></span></span>
+                        <span class="skill-val">65</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-wrap" id="homeGrid"></div>
+
+        <footer>
+            © 风电工作站 | 个人技术笔记站点，内容仅供学习参考
+        </footer>
+    </div>
+<script>
+async function loadHome(){
+    const res = await fetch("articles.json");
+    const all = await res.json();
+    const cats = [
+        {key:"wind-pre", title:"风电前期", link:"wind-pre.html"},
+        {key:"wind-mid", title:"风电中期", link:"wind-mid.html"},
+        {key:"market", title:"电力市场", link:"market.html"},
+        {key:"notes", title:"笔记杂谈", link:"notes.html"},
+    ]
+    let html = "";
+    cats.forEach(cat=>{
+        const list = all.filter(x=>x.category === cat.key).sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,4);
+        html += `
+        <div class="cat-card">
+            <div class="cat-head">
+                <div class="cat-name">${cat.title}</div>
+                <a class="more-link" href="${cat.link}">更多 →</a>
+            </div>
+        `
+        list.forEach(art=>{
+            html += `
+                <div class="article-item">
+                    <a class="art-title" href="detail.html?id=${art.id}">${art.title}</a>
+                    <div class="art-desc">${art.desc}</div>
+                    <div class="art-date">${art.date}</div>
+                </div>
+            `
+        })
+        html += `</div>`
+    })
+    document.getElementById("homeGrid").innerHTML = html;
+}
+loadHome();
+</script>
+</body>
+</html>
