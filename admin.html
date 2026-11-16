@@ -235,6 +235,167 @@
             text-align: right;
         }
 
+        /* ---------- 正文富文本编辑器 ---------- */
+        .editor-wrap {
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: var(--bg-deep);
+            overflow: hidden;
+            transition: border-color .16s, box-shadow .16s;
+        }
+
+        .editor-wrap:focus-within {
+            border-color: rgba(92, 200, 255, .65);
+            box-shadow: 0 0 0 3px rgba(92, 200, 255, .12);
+        }
+
+        .editor-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 3px;
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--line-soft);
+            background: rgba(27, 34, 64, .6);
+        }
+
+        .tb {
+            min-width: 30px;
+            height: 27px;
+            padding: 0 7px;
+            font-family: var(--mono);
+            font-size: 12px;
+            line-height: 1;
+            color: var(--txt-2);
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: color .14s, border-color .14s, background .14s;
+        }
+
+        .tb:hover {
+            color: var(--blue);
+            border-color: rgba(92, 200, 255, .35);
+            background: rgba(92, 200, 255, .08);
+        }
+
+        .tb-sep {
+            width: 1px;
+            height: 17px;
+            margin: 0 3px;
+            background: var(--line);
+        }
+
+        .tb-color {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            height: 27px;
+            padding: 0 8px;
+            border: 1px solid var(--line);
+            border-radius: 5px;
+            background: rgba(12, 15, 25, .7);
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--txt-2);
+            cursor: pointer;
+            transition: border-color .14s, color .14s;
+        }
+
+        .tb-color:hover {
+            border-color: rgba(92, 200, 255, .4);
+            color: var(--blue);
+        }
+
+        .tb-color input {
+            width: 16px;
+            height: 16px;
+            padding: 0;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        .tb-select {
+            height: 27px;
+            padding: 0 6px;
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--txt-2);
+            background: var(--bg-deep);
+            border: 1px solid var(--line);
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .tb-select:focus {
+            border-color: rgba(92, 200, 255, .55);
+            color: var(--txt-1);
+        }
+
+        .editor-body {
+            min-height: 330px;
+            max-height: 62vh;
+            overflow-y: auto;
+            padding: 12px 14px;
+            font-size: 14px;
+            line-height: 1.85;
+            color: var(--txt-1);
+            outline: none;
+        }
+
+        .editor-body[data-empty]::before {
+            content: attr(data-placeholder);
+            color: var(--txt-3);
+            pointer-events: none;
+        }
+
+        .editor-body h2 {
+            margin: .8em 0 .4em;
+            font-size: 18px;
+            color: var(--blue);
+        }
+
+        .editor-body h3 {
+            margin: .7em 0 .35em;
+            font-size: 16px;
+            color: var(--purple);
+        }
+
+        .editor-body p {
+            margin: 0 0 .85em;
+        }
+
+        .editor-body blockquote {
+            margin: .8em 0;
+            padding: 6px 12px;
+            border-left: 3px solid rgba(92, 200, 255, .6);
+            background: rgba(92, 200, 255, .06);
+            color: var(--txt-2);
+        }
+
+        .editor-body ul,
+        .editor-body ol {
+            margin: 0 0 .9em;
+            padding-left: 1.4em;
+        }
+
+        .editor-body code {
+            padding: 1px 5px;
+            border-radius: 3px;
+            background: rgba(92, 200, 255, .1);
+            font-family: var(--mono);
+            font-size: .9em;
+            color: var(--blue);
+        }
+
+        .editor-body img {
+            max-width: 100%;
+            border-radius: 6px;
+        }
+
         .form-actions {
             display: flex;
             flex-wrap: wrap;
@@ -472,8 +633,45 @@
                 </div>
 
                 <div class="field">
-                    <label for="f-content">正文</label>
-                    <textarea class="textarea" id="f-content" rows="14" placeholder="直接换行即可，详情页会原样保留段落与空行"></textarea>
+                    <label>正文</label>
+                    <div class="editor-wrap">
+                        <div class="editor-toolbar" id="editorToolbar">
+                            <button type="button" class="tb" data-cmd="undo" title="撤销">↶</button>
+                            <button type="button" class="tb" data-cmd="redo" title="重做">↷</button>
+                            <span class="tb-sep"></span>
+                            <button type="button" class="tb" data-cmd="formatBlock" data-val="p" title="正文段落">正文</button>
+                            <button type="button" class="tb" data-cmd="formatBlock" data-val="h2" title="二级标题">H2</button>
+                            <button type="button" class="tb" data-cmd="formatBlock" data-val="h3" title="三级标题">H3</button>
+                            <button type="button" class="tb" data-cmd="formatBlock" data-val="blockquote" title="引用块">引用</button>
+                            <span class="tb-sep"></span>
+                            <button type="button" class="tb" data-cmd="bold" title="加粗（Ctrl+B）"><b>B</b></button>
+                            <button type="button" class="tb" data-cmd="italic" title="斜体（Ctrl+I）"><i>I</i></button>
+                            <button type="button" class="tb" data-cmd="underline" title="下划线（Ctrl+U）"><u>U</u></button>
+                            <button type="button" class="tb" data-cmd="strikeThrough" title="删除线"><s>S</s></button>
+                            <button type="button" class="tb" data-cmd="inlineCode" title="行内代码">&lt;/&gt;</button>
+                            <span class="tb-sep"></span>
+                            <button type="button" class="tb" data-cmd="insertUnorderedList" title="无序列表">• 列表</button>
+                            <button type="button" class="tb" data-cmd="insertOrderedList" title="有序列表">1. 列表</button>
+                            <button type="button" class="tb" data-cmd="insertHorizontalRule" title="分隔线">分隔线</button>
+                            <button type="button" class="tb" data-cmd="link" title="插入链接">链接</button>
+                            <button type="button" class="tb" data-cmd="uploadImage" title="从电脑选图，直接提交进仓库 assets 目录">上传图片</button>
+                            <button type="button" class="tb" data-cmd="image" title="插入图片（填图片网址）">图片网址</button>
+                            <button type="button" class="tb" data-cmd="clear" title="清除当前选区格式">清除格式</button>
+                            <span class="tb-sep"></span>
+                            <label class="tb-color" title="选中文字后点色块，给选中的文字上色">
+                                <input type="color" id="textColor" value="#5cc8ff">
+                                <span>颜色</span>
+                            </label>
+                            <select class="tb-select" id="declareSel" title="原创性声明：显示在文章详情页底部">
+                                <option value="none">未设置声明</option>
+                                <option value="orig-noshare">原创 · 禁止转载</option>
+                                <option value="orig-share">原创 · 可转载</option>
+                                <option value="reprint">转载作品</option>
+                            </select>
+                        </div>
+                        <div class="editor-body" id="f-content" contenteditable="true"
+                             data-placeholder="直接输入正文；选中文字后可加标题、加粗、列表、引用。从别处粘贴会自动清洗掉多余样式。"></div>
+                    </div>
                     <div class="counter" id="counter">0 字</div>
                 </div>
 
@@ -510,6 +708,8 @@
         </footer>
     </div>
 
+    <input type="file" id="imgFile" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" hidden>
+
     <div class="toast" id="toast"></div>
 
     <script>
@@ -530,6 +730,7 @@
         let dirty = false;
         let connected = false;
         let remoteSha = null;
+        let lastRange = null;
         let cfg = { owner: "", repo: "", branch: "main", path: "articles.json", token: "" };
 
         const $ = id => document.getElementById(id);
@@ -673,6 +874,61 @@
         }
 
         /* ---------- 连接 / 退出 ---------- */
+        /* ---------- 图片上传（直接提交到仓库 assets 目录） ---------- */
+        const IMG_MIME = {
+            "image/png": "png",
+            "image/jpeg": "jpg",
+            "image/gif": "gif",
+            "image/webp": "webp",
+            "image/svg+xml": "svg"
+        };
+
+        async function uploadImage(file) {
+            if (!connected) {
+                toast("请先连接 GitHub 仓库：图片需要提交到仓库的 assets 目录", true);
+                return null;
+            }
+            const ext = IMG_MIME[file.type];
+            if (!ext) {
+                toast("只支持 png / jpg / gif / webp / svg", true);
+                return null;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                toast("图片超过 5MB，请压缩后再上传", true);
+                return null;
+            }
+            const d = new Date();
+            const p = n => String(n).padStart(2, "0");
+            const stamp = d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "-"
+                + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds());
+            const name = "img-" + stamp + "-" + Math.random().toString(36).slice(2, 6) + "." + ext;
+            const repoPath = "assets/" + name;
+            const b64 = await new Promise((resolve, reject) => {
+                const fr = new FileReader();
+                fr.onload = () => resolve(String(fr.result).split(",")[1] || "");
+                fr.onerror = reject;
+                fr.readAsDataURL(file);
+            });
+            const url = "/repos/" + encodeURIComponent(cfg.owner) + "/" + encodeURIComponent(cfg.repo)
+                + "/contents/" + repoPath.split("/").map(encodeURIComponent).join("/");
+            const res = await ghFetch(url, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: "上传图片：" + name + "（" + nowStamp() + "）",
+                    content: b64,
+                    branch: cfg.branch
+                })
+            });
+            if (!res.ok) {
+                toast(apiError(res.status, "上传图片"), true);
+                return null;
+            }
+            const data = await res.json();
+            return (data.content && data.content.download_url)
+                || ("https://raw.githubusercontent.com/" + cfg.owner + "/" + cfg.repo + "/" + cfg.branch + "/" + repoPath);
+        }
+
         function loadConfig() {
             try {
                 const saved = JSON.parse(localStorage.getItem(CKEY_CFG) || "{}");
@@ -814,18 +1070,126 @@
             }).join("");
         }
 
+        /* ---------- 正文富文本 ---------- */
+        function escHtml(s) {
+            return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // 白名单清洗：只留排版所需标签，挡掉脚本、内联样式、危险链接
+        function sanitizeHTML(html) {
+            const box = document.createElement("div");
+            box.innerHTML = html;
+            const allowed = ["P", "BR", "H1", "H2", "H3", "H4", "UL", "OL", "LI", "BLOCKQUOTE", "PRE", "CODE",
+                "STRONG", "B", "EM", "I", "U", "S", "STRIKE", "DEL", "A", "IMG", "HR", "DIV", "SPAN"];
+            const walk = node => {
+                [...node.children].forEach(el => {
+                    const tag = el.tagName;
+                    if (tag === "SCRIPT" || tag === "STYLE" || tag === "IFRAME" || tag === "OBJECT" || tag === "FORM") {
+                        el.remove();
+                        return;
+                    }
+                    walk(el);
+                    if (!allowed.includes(tag)) {
+                        while (el.firstChild) node.insertBefore(el.firstChild, el);
+                        el.remove();
+                        return;
+                    }
+                    [...el.attributes].forEach(at => {
+                        const name = at.name.toLowerCase();
+                        if (tag === "A" && name === "href") {
+                            const v = at.value.trim();
+                            if (/^(https?:|mailto:)/i.test(v)) {
+                                el.setAttribute("href", v);
+                                el.setAttribute("target", "_blank");
+                                el.setAttribute("rel", "noopener");
+                            } else {
+                                el.removeAttribute("href");
+                            }
+                            return;
+                        }
+                        if (name === "style") {
+                            const keep = at.value.split(";").map(s => s.trim()).filter(Boolean).filter(decl => {
+                                const parts = decl.split(":");
+                                const key = (parts[0] || "").trim().toLowerCase();
+                                const v = parts.slice(1).join(":").trim();
+                                if (!v) return false;
+                                if (key === "color" || key === "background-color") {
+                                    return /^(#[0-9a-f]{3,8}|rgba?\([\d\s.,%]+\)|[a-z]{3,20})$/i.test(v);
+                                }
+                                if (key === "font-weight") return /^(bold|bolder|normal|[1-9]00)$/i.test(v);
+                                if (key === "font-style") return /^(italic|oblique|normal)$/i.test(v);
+                                if (key === "text-decoration" || key === "text-decoration-line") {
+                                    return /^(none|underline|line-through)$/i.test(v);
+                                }
+                                if (key === "text-align") return /^(left|right|center|justify)$/i.test(v);
+                                return false;
+                            });
+                            if (keep.length) el.setAttribute("style", keep.join("; "));
+                            else el.removeAttribute("style");
+                            return;
+                        }
+                        if (tag === "IMG" && (name === "src" || name === "alt")) return;
+                        el.removeAttribute(at.name);
+                    });
+                    if (tag === "IMG") {
+                        const src = el.getAttribute("src") || "";
+                        if (!/^(https?:|data:image\/)/i.test(src)) el.remove();
+                    }
+                });
+            };
+            walk(box);
+            return box.innerHTML;
+        }
+
+        // 老文章是纯文本：按空行分段、单换行转 <br>
+        function toEditorHTML(content) {
+            if (!content) return "";
+            const looksHTML = /<\/?(p|h[1-6]|ul|ol|li|blockquote|pre|strong|em|b|i|u|s|strike|code|a|img|hr)\b/i.test(content);
+            if (looksHTML) return sanitizeHTML(content);
+            return content.split(/\n{2,}/).map(block =>
+                "<p>" + block.split("\n").map(escHtml).join("<br>") + "</p>"
+            ).join("");
+        }
+
+        function getContent() {
+            const ed = $("f-content");
+            if (!ed.textContent.trim()) return "";
+            return sanitizeHTML(ed.innerHTML).trim();
+        }
+
+        function insertInlineCode() {
+            const sel = window.getSelection();
+            if (!sel || !sel.rangeCount || sel.isCollapsed) {
+                document.execCommand("insertHTML", false, "<code>代码</code>");
+                return;
+            }
+            const range = sel.getRangeAt(0);
+            const code = document.createElement("code");
+            code.appendChild(range.extractContents());
+            range.insertNode(code);
+            sel.removeAllRanges();
+            const next = document.createRange();
+            next.selectNodeContents(code);
+            sel.addRange(next);
+        }
+
         /* ---------- 表单 ---------- */
         function fillForm(art) {
             $("f-title").value = art ? (art.title || "") : "";
             $("f-cat").value = art ? (art.category || "wind-pre") : "wind-pre";
             $("f-date").value = art ? (art.date || today()) : today();
             $("f-desc").value = art ? (art.desc || "") : "";
-            $("f-content").value = art ? (art.content || "") : "";
+            $("declareSel").value = (art && art.declare) ? art.declare : "none";
+            $("f-content").innerHTML = art ? toEditorHTML(art.content) : "";
             updateCounter();
         }
 
         function updateCounter() {
-            $("counter").textContent = $("f-content").value.length + " 字";
+            const ed = $("f-content");
+            const len = (ed.textContent || "").replace(/\s/g, "").length;
+            $("counter").textContent = len + " 字";
+            if (ed.textContent.trim()) ed.removeAttribute("data-empty");
+            else ed.setAttribute("data-empty", "1");
         }
 
         function guard() {
@@ -848,7 +1212,8 @@
             const category = $("f-cat").value;
             const date = $("f-date").value;
             const desc = $("f-desc").value.trim();
-            const content = $("f-content").value;
+            const content = getContent();
+            const declareVal = $("declareSel").value;
 
             if (!title) {
                 toast("标题不能为空", true);
@@ -860,14 +1225,14 @@
                 $("f-date").focus();
                 return;
             }
-            if (!content.trim()) {
+            if (!content) {
                 toast("正文不能为空", true);
                 $("f-content").focus();
                 return;
             }
 
             const isNew = !editingId;
-            const rec = { id: editingId || nextId(), title: title, category: category, date: date, desc: desc, content: content };
+            const rec = { id: editingId || nextId(), title: title, category: category, date: date, desc: desc, content: content, declare: declareVal === "none" ? "" : declareVal };
 
             if (!isNew) {
                 const idx = articles.findIndex(a => a.id === editingId);
@@ -1022,7 +1387,126 @@
             if (editingId) deleteArticle(editingId);
         });
 
-        $("f-content").addEventListener("input", updateCounter);
+        // 回车默认产生 <p> 段落；格式用 style 属性表达，便于白名单保留颜色
+        try {
+            document.execCommand("defaultParagraphSeparator", false, "p");
+            document.execCommand("styleWithCSS", false, true);
+        } catch (err) { /* 老浏览器忽略 */ }
+
+        $("f-content").addEventListener("input", () => {
+            updateCounter();
+            dirty = true;
+        });
+
+        // 工具栏按下时不让编辑器失焦，否则选区会丢
+        $("editorToolbar").addEventListener("mousedown", e => {
+            if (e.target.closest("[data-cmd]")) e.preventDefault();
+        });
+
+        $("editorToolbar").addEventListener("click", e => {
+            const btn = e.target.closest("[data-cmd]");
+            if (!btn) return;
+            e.preventDefault();
+            const cmd = btn.dataset.cmd;
+            const val = btn.dataset.val;
+            const ed = $("f-content");
+            ed.focus();
+            if (cmd === "inlineCode") {
+                insertInlineCode();
+            } else if (cmd === "link") {
+                const url = window.prompt("输入链接地址（http:// 或 https:// 开头）", "https://");
+                if (!url) return;
+                if (!/^https?:/i.test(url)) {
+                    toast("链接必须以 http:// 或 https:// 开头", true);
+                    return;
+                }
+                document.execCommand("createLink", false, url);
+            } else if (cmd === "uploadImage") {
+                $("imgFile").click();
+            } else if (cmd === "image") {
+                const url = window.prompt("输入图片网址（http:// 或 https:// 开头）", "https://");
+                if (!url) return;
+                if (!/^https?:/i.test(url)) {
+                    toast("图片网址必须以 http:// 或 https:// 开头", true);
+                    return;
+                }
+                document.execCommand("insertImage", false, url);
+            } else if (cmd === "clear") {
+                document.execCommand("removeFormat");
+                document.execCommand("formatBlock", false, "p");
+            } else if (cmd === "formatBlock") {
+                document.execCommand("formatBlock", false, val);
+            } else {
+                document.execCommand(cmd, false, null);
+            }
+            updateCounter();
+            dirty = true;
+        });
+
+        // 记住编辑器选区：点颜色块会让编辑器失焦，恢复选区后才知道给哪段文字上色
+        document.addEventListener("selectionchange", () => {
+            const ed = $("f-content");
+            const sel = window.getSelection();
+            if (!ed || !sel || !sel.rangeCount) return;
+            const range = sel.getRangeAt(0);
+            if (ed.contains(range.commonAncestorContainer)) lastRange = range.cloneRange();
+        });
+
+        $("textColor").addEventListener("input", () => {
+            const ed = $("f-content");
+            ed.focus();
+            if (!lastRange) {
+                toast("请先选中要上色的文字", true);
+                return;
+            }
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(lastRange);
+            document.execCommand("foreColor", false, $("textColor").value);
+            updateCounter();
+            dirty = true;
+        });
+
+        $("declareSel").addEventListener("change", () => { dirty = true; });
+
+        // 选好图片后：上传到仓库 assets，再把地址插进光标处
+        $("imgFile").addEventListener("change", async e => {
+            const file = e.target.files && e.target.files[0];
+            e.target.value = "";
+            if (!file) return;
+            toast("正在上传图片…");
+            const url = await uploadImage(file);
+            if (!url) return;
+            const ed = $("f-content");
+            ed.focus();
+            document.execCommand("insertHTML", false,
+                '<img src="' + url + '" alt="配图">');
+            updateCounter();
+            dirty = true;
+            toast("图片已上传并插入正文");
+        });
+
+        // 从 Word / 网页粘贴时先清洗，避免把一堆内联样式带进来
+        $("f-content").addEventListener("paste", e => {
+            e.preventDefault();
+            const cd = e.clipboardData || window.clipboardData;
+            if (!cd) return;
+            const html = cd.getData("text/html");
+            const text = cd.getData("text/plain");
+            let ins = "";
+            if (html) {
+                ins = sanitizeHTML(html);
+            } else if (text) {
+                ins = text.split(/\n{2,}/).map(block =>
+                    "<p>" + block.split("\n").map(escHtml).join("<br>") + "</p>"
+                ).join("");
+            }
+            if (!ins) return;
+            document.execCommand("insertHTML", false, ins);
+            updateCounter();
+            dirty = true;
+        });
+
         $("f-filter").addEventListener("change", renderList);
 
         ["f-title", "f-cat", "f-date", "f-desc", "f-content"].forEach(id => {

@@ -52,7 +52,8 @@ fetch("articles.json")
     document.getElementById("bread-title").innerText = art.title;
     document.getElementById("title").innerText = art.title;
     document.getElementById("date").innerText = art.date;
-    document.getElementById("content").innerText = art.content;
+    document.getElementById("content").innerHTML = renderContent(art.content);
+    renderDeclare(art.declare);
 })
 .catch(err=>{
     document.getElementById("title").innerHTML = `<span class="error-title">数据加载失败</span>`;
@@ -60,6 +61,106 @@ fetch("articles.json")
     document.getElementById("date").innerText = "";
     document.getElementById("bread-title").innerText = "错误";
 })
+
+/* ---------- 正文渲染：兼容「富文本 HTML」与「老文章纯文本」两种存法 ---------- */
+function escHtml(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// 白名单清洗：只保留排版需要的基础标签，挡掉脚本、内联样式和危险链接
+function sanitize(html) {
+    const box = document.createElement("div");
+    box.innerHTML = html;
+    const allowed = ["P", "BR", "H1", "H2", "H3", "H4", "UL", "OL", "LI", "BLOCKQUOTE", "PRE", "CODE",
+        "STRONG", "B", "EM", "I", "U", "S", "STRIKE", "DEL", "A", "IMG", "HR", "DIV", "SPAN"];
+    const walk = node => {
+        [...node.children].forEach(el => {
+            const tag = el.tagName;
+            if (tag === "SCRIPT" || tag === "STYLE" || tag === "IFRAME" || tag === "OBJECT" || tag === "FORM") {
+                el.remove();
+                return;
+            }
+            walk(el);
+            if (!allowed.includes(tag)) {
+                while (el.firstChild) node.insertBefore(el.firstChild, el);
+                el.remove();
+                return;
+            }
+            [...el.attributes].forEach(at => {
+                const name = at.name.toLowerCase();
+                if (tag === "A" && name === "href") {
+                    const v = at.value.trim();
+                    if (/^(https?:|mailto:)/i.test(v)) {
+                        el.setAttribute("href", v);
+                        el.setAttribute("target", "_blank");
+                        el.setAttribute("rel", "noopener");
+                    } else {
+                        el.removeAttribute("href");
+                    }
+                    return;
+                }
+                if (name === "style") {
+                    const keep = at.value.split(";").map(s => s.trim()).filter(Boolean).filter(decl => {
+                        const parts = decl.split(":");
+                        const key = (parts[0] || "").trim().toLowerCase();
+                        const v = parts.slice(1).join(":").trim();
+                        if (!v) return false;
+                        if (key === "color" || key === "background-color") {
+                            return /^(#[0-9a-f]{3,8}|rgba?\([\d\s.,%]+\)|[a-z]{3,20})$/i.test(v);
+                        }
+                        if (key === "font-weight") return /^(bold|bolder|normal|[1-9]00)$/i.test(v);
+                        if (key === "font-style") return /^(italic|oblique|normal)$/i.test(v);
+                        if (key === "text-decoration" || key === "text-decoration-line") {
+                            return /^(none|underline|line-through)$/i.test(v);
+                        }
+                        if (key === "text-align") return /^(left|right|center|justify)$/i.test(v);
+                        return false;
+                    });
+                    if (keep.length) el.setAttribute("style", keep.join("; "));
+                    else el.removeAttribute("style");
+                    return;
+                }
+                if (tag === "IMG" && (name === "src" || name === "alt")) return;
+                el.removeAttribute(at.name);
+            });
+            if (tag === "IMG") {
+                const src = el.getAttribute("src") || "";
+                if (!/^(https?:|data:image\/)/i.test(src)) el.remove();
+            }
+        });
+    };
+    walk(box);
+    return box.innerHTML;
+}
+
+// 老文章是纯文本，按空行分段落、单换行保留为 <br>
+function renderContent(content) {
+    if (!content) return "";
+    const looksHTML = /<\/?(p|h[1-6]|ul|ol|li|blockquote|pre|strong|em|b|i|u|s|strike|code|a|img|hr)\b/i.test(content);
+    if (looksHTML) return sanitize(content);
+    return content.split(/\n{2,}/).map(block =>
+        "<p>" + block.split("\n").map(escHtml).join("<br>") + "</p>"
+    ).join("");
+}
+
+/* ---------- 原创性声明标识 ---------- */
+const DECLARE_MAP = {
+    "orig-noshare": { cls: "decl-forbid", text: "原创作品 · 禁止转载" },
+    "orig-share": { cls: "decl-share", text: "原创作品 · 可转载（请注明出处）" },
+    "reprint": { cls: "decl-reprint", text: "转载作品" }
+};
+
+function renderDeclare(value) {
+    const content = document.getElementById("content");
+    const old = document.querySelector(".article-declare");
+    if (old) old.remove();
+    const info = DECLARE_MAP[value];
+    if (!info) return;
+    const el = document.createElement("div");
+    el.className = "article-declare " + info.cls;
+    el.textContent = info.text;
+    content.parentNode.insertBefore(el, content.nextSibling);
+}
 
 // 回到顶部逻辑
 const backTopBtn = document.getElementById('backTop');
